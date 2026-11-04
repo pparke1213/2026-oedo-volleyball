@@ -38,3 +38,18 @@
 @media(max-width:880px){.official-matches{grid-template-columns:1fr}.official-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.official-fields{grid-template-columns:1fr}.official-fields .whole{grid-column:auto}.official-role-grid{grid-template-columns:1fr}}
 @media print{#view-officials .official-toolbar,#view-officials .official-bulk,#view-officials .official-roster-wrap{display:none!important}#view-officials .official-matches{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* 날짜별 운영위원 선택 및 한 날짜만 편집 */
+.official-day-controls{margin:14px 0 14px}
+.official-date-picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px;margin:14px 0 16px}
+.official-date-btn{background:#f8fafc;border:1px solid #d8e3eb;border-radius:11px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:70px;cursor:pointer;color:#37536a;transition:background .15s,border-color .15s}
+.official-date-btn b{font-size:14px}.official-date-btn small{font-size:11px;color:#697f91;font-weight:700}
+.official-date-btn.active{background:#153c58;color:#fff;border-color:#153c58;box-shadow:0 3px 11px #153c5826}
+.official-date-btn.active small{color:#d9edf5}
+.official-date-btn.has-warning:not(.active){background:#fff7ed;border-color:#e9cbb2}
+.official-date-btn:hover:not(.active){border-color:#6ba99f;background:#eef8f6}
+.official-date-nav{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:12px 0}
+.official-date-title{display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px}
+.official-date-title b{font-size:17px;color:#183c55}.official-date-title small{font-size:11px;color:#71889b}
+.official-day-controls .official-toolbar{margin-bottom:0}
+@media(max-width:600px){.official-date-picker{grid-template-columns:repeat(2,minmax(0,1fr))}.official-date-nav .btn{padding:9px 7px;white-space:nowrap;font-size:11px}.official-date-title b{font-size:14px}}

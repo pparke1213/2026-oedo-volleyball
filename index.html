@@ -71,11 +71,11 @@ button.tree-card:hover:not(:disabled){border-color:#28897a;transform:translateY(
 </main><div id="toast" class="toast" role="status"></div>
 <div id="resultModal" class="result-backdrop hidden" aria-hidden="true"><div class="result-dialog" role="dialog" aria-modal="true" aria-labelledby="resultTitle"><form id="resultForm"><h3 id="resultTitle">경기 결과 입력</h3><p class="dialog-meta" id="dialogMeta"></p><div class="dialog-team-choices" id="resultTeams"></div><label class="dialog-label" for="dialogScore">최종 세트 결과</label><select id="dialogScore" class="dialog-score" required><option value="">세트 결과 선택</option><option value="2:0">2:0</option><option value="2:1">2:1</option></select><label class="dialog-label">세트별 점수 <small style="color:#8192a2;font-weight:500">(선택 입력)</small></label><div class="sets-grid" id="dialogSets"><span></span><small>왼쪽 팀</small><span></span><small>오른쪽 팀</small><span>1세트</span><input type="number" min="0" max="99" inputmode="numeric" data-set="0" data-side="0" placeholder="점"/><span>:</span><input type="number" min="0" max="99" inputmode="numeric" data-set="0" data-side="1" placeholder="점"/><span>2세트</span><input type="number" min="0" max="99" inputmode="numeric" data-set="1" data-side="0" placeholder="점"/><span>:</span><input type="number" min="0" max="99" inputmode="numeric" data-set="1" data-side="1" placeholder="점"/><span>3세트</span><input type="number" min="0" max="99" inputmode="numeric" data-set="2" data-side="0" placeholder="점"/><span>:</span><input type="number" min="0" max="99" inputmode="numeric" data-set="2" data-side="1" placeholder="점"/></div><div class="dialog-help">선수 명단과 달리 경기 점수는 학생 공개 화면에도 표시됩니다. 3세트는 2:1 경기에만 입력하세요.</div><div id="dialogError" class="dialog-error" role="alert"></div><div class="dialog-actions"><button type="button" id="resetResult" class="btn warn">결과 삭제</button><button type="button" id="cancelResult" class="btn">취소</button><button type="submit" class="btn primary">결과 저장</button></div></form></div></div>
 <script src="./firebase-config.js"></script>
-<script src="https://www.gstatic.com/firebasejs/13.2.0/firebase-app-compat.js" defer></script>
-<script src="https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore-compat.js" defer></script>
-<script src="https://www.gstatic.com/firebasejs/13.2.0/firebase-auth-compat.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
-<script defer>
+<script src="https://www.gstatic.com/firebasejs/13.2.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/13.2.0/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
 (()=>{
 'use strict';
 const STORAGE_KEY='oedo-bounce-volleyball-2026-v2';

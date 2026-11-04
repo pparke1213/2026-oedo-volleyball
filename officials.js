@@ -7,6 +7,7 @@ const CLUB_SIZE=21;
 const dayNames=['일','월','화','수','목','금','토'];
 let api=null;
 let data={members:[],assignments:{}};
+let selectedDate=null;
 function $(s){return document.querySelector(s);}
 function h(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));}
 function clubId(n){return 'C'+String(n).padStart(2,'0');}
@@ -111,9 +112,20 @@ function groupByDate(){
  for(const m of allGames())(groups[m.date]??=[]).push(m);
  return Object.entries(groups).sort(([a],[b])=>a.localeCompare(b));
 }
+function chooseDate(date){
+ if(!groupByDate().some(([d])=>d===date))return;
+ selectedDate=date;render();
+}
+function shiftDate(amount){
+ const days=groupByDate().map(([d])=>d),i=days.indexOf(selectedDate);
+ if(i+amount>=0&&i+amount<days.length)chooseDate(days[i+amount]);
+}
 function render(){
  if(!api||!api.canEdit()||!$('#officialRosterBody'))return;
- const counts=assignedStats(),matches=allGames(),total=matches.length*4,filled=Object.values(data.assignments).reduce((n,assign)=>n+ROLES.filter(([r])=>!!assign[r]).length,0);
+ const counts=assignedStats(),matches=allGames(),total=matches.length*4,filled=matches.reduce((n,m)=>n+ROLES.filter(([r])=>!!assignmentsFor(m.id)[r]).length,0);
+ const days=groupByDate();
+ if(!days.some(([day])=>day===selectedDate))selectedDate=days[0]?.[0]||null;
+ const currentIndex=days.findIndex(([day])=>day===selectedDate);
  const named=data.members.filter(m=>m.name.trim()).length;
  const linked=data.members.filter(m=>m.name.trim()&&membersPlayingTeam(m).status!=='unknown').length;
  let warningCount=0;
@@ -135,7 +147,28 @@ function render(){
    '<label class="whole">배정 불가 날짜 (쉼표로 구분)<input data-off-absent="'+m.id+'" value="'+h(m.unavailable)+'" placeholder="예: 2026-11-20, 2026-11-24" /></label></div>'+
    '<div class="official-help" style="margin-top:7px">'+h(link.label)+' · '+cnt.total+'회 배정</div></article>';
  }).join('');
- const perDay=groupByDate().map(([date,games])=>{
+ const badges=days.map(([date,games])=>{
+  const complete=games.reduce((n,m)=>n+ROLES.filter(([role])=>!!assignmentsFor(m.id)[role]).length,0);
+  const totalSlots=games.length*4;
+  const conflicts=games.reduce((n,m)=>{
+   const roles=assignmentsFor(m.id);
+   return n+ROLES.filter(([role])=>roles[role]&&!!statusFor(roles[role],m,role,data.assignments).reason).length;
+  },0);
+  return {date,complete,totalSlots,conflicts};
+ });
+ $('#officialDatePicker').innerHTML=badges.map(({date,complete,totalSlots,conflicts})=>{
+  const active=date===selectedDate,status=conflicts?'⚠ 확인 '+conflicts+'건':complete===totalSlots?'✓ 완료':complete+'/'+totalSlots+'명';
+  return '<button type="button" class="official-date-btn'+(active?' active':'')+(conflicts?' has-warning':'')+'" data-off-date="'+h(date)+'" aria-pressed="'+active+'"><b>'+h(dateLabel(date))+'</b><small>'+h(status)+'</small></button>';
+ }).join('');
+ $('#officialSelectedDate').textContent=selectedDate?dateLabel(selectedDate)+' · 운영위원 수정':'날짜를 선택하세요';
+ $('#officialSelectedSummary').textContent=currentIndex>=0?((currentIndex+1)+' / '+days.length+'일 · '+badges[currentIndex].complete+'/'+badges[currentIndex].totalSlots+'명 배정'):'';
+ $('#officialPrevDate').disabled=currentIndex<=0;
+ $('#officialNextDate').disabled=currentIndex<0||currentIndex>=days.length-1;
+ $('#officialDateHint').textContent=currentIndex>=0&&days[currentIndex][1].some(m=>api.participants(m).some(id=>!id))?
+  '승리팀이 아직 정해지지 않은 경기가 있어요. 경기 결과가 나오면 이날 배정의 출전 충돌을 다시 확인하세요.':
+  '경기 결과가 변경되면 이 날짜의 배정 충돌을 자동으로 다시 확인합니다.';
+ const totalConflicts=badges.reduce((n,d)=>n+d.conflicts,0);
+ const perDay=days.filter(([date])=>date===selectedDate).map(([date,games])=>{
   const dayConflicts=[];
   const cards=games.map(m=>{
    const assignments=assignmentsFor(m.id),participating=api.participants(m);
@@ -157,7 +190,7 @@ function render(){
  $('#officialDays').innerHTML=perDay;
  const scores=Object.entries(counts).filter(([id])=>!!memberById(id)?.name.trim()).sort((a,b)=>b[1].total-a[1].total||a[0].localeCompare(b[0]));
  $('#officialLoads').innerHTML=scores.map(([id,s])=>'<div><b>'+h(rosterName(id))+' · '+s.total+'회</b><small>주심 '+s.roles.chief+' · 선심 '+(s.roles.line1+s.roles.line2)+' · 기록 '+s.roles.record+'</small></div>').join('')||'<p class="official-help">운영위원 이름을 입력하면 개인별 배정 횟수가 표시됩니다.</p>';
- $('#officialWarningCount').textContent=warningCount?('⚠ 확인 필요 '+warningCount+'건'):'배정 충돌 없음';
+ $('#officialWarningCount').textContent=totalConflicts?('⚠ 확인 필요 '+totalConflicts+'건'):'배정 충돌 없음';
 }
 function roleChange(target){
  const mid=target.dataset.offRole,role=target.dataset.role,personId=target.value;
@@ -171,13 +204,16 @@ function roleChange(target){
  if(Object.keys(record).length)data.assignments[mid]=record;else delete data.assignments[mid];
  changed('운영위원 배정을 저장했어요.');
 }
-function autoFill(all){
+function autoFill(all,onlyDate=null){
  if(!api.canEdit())return;
  const known=data.members.filter(m=>m.name.trim()&&membersPlayingTeam(m).status!=='unknown');
  if(!known.length){alert('먼저 배구부 학생 이름을 입력하고, 대회 참가팀 또는 「경기 선수 아님」을 지정해 주세요.');return;}
- if(all&&!confirm('운영위원 배정을 전부 다시 만들까요? 기존 수동 배정도 모두 변경됩니다.'))return;
- if(all)data.assignments={};
- const games=allGames(),byDay=groupByDate(),counts=assignedStats();
+ if(all&&!confirm((onlyDate?dateLabel(onlyDate)+' ':'전체 날짜 ')+'운영위원 배정을 다시 만들까요?'+(onlyDate?' 선택한 날짜의 수동 배정만 변경됩니다.':' 기존 수동 배정이 모두 변경됩니다.')))return;
+ if(all){
+  if(onlyDate){for(const m of allGames())if(m.date===onlyDate)delete data.assignments[m.id];}
+  else data.assignments={};
+ }
+ const byDay=groupByDate().filter(([date])=>!onlyDate||date===onlyDate),counts=assignedStats();
  let filled=0,empty=0,provisional=0;
  const tieScore=id=>id.charCodeAt(1)*53+Number(id.slice(1))*17;
  for(const [date,dayGames] of byDay){
@@ -197,7 +233,7 @@ function autoFill(all){
    }
   }
  }
- changed(filled+'자리 자동 배정 · 미배정 '+empty+'자리'+(provisional?' · 잠정 '+provisional+'자리':''));
+ changed((onlyDate?dateLabel(onlyDate)+' · ':'')+filled+'자리 자동 배정 · 미배정 '+empty+'자리'+(provisional?' · 잠정 '+provisional+'자리':''));
  if(empty||provisional)alert('자동 배정 결과: '+filled+'자리 배정, '+empty+'자리 미배정, '+provisional+'자리 출전 가능성 주의.\n미배정된 자리는 명단과 불참 날짜를 확인해 직접 수정해 주세요.');
 }
 function exportCsv(){
@@ -239,6 +275,13 @@ function init(hostApi){
    '<p class="official-help">이름만 입력하면 아직 출전 여부가 확인되지 않은 학생은 자동배정에서 제외됩니다. 반드시 본인의 참가팀을 연결하거나 「경기 선수 아님」을 선택하세요. 불가 날짜는 YYYY-MM-DD 형식으로 쉼표로 구분하세요.</p>'+
    '<div id="officialRosterBody" class="official-roster-grid"></div></details></div>'+
    '<div class="section-head"><div><h2>📅 날짜별 경기 운영위원 배정표</h2><p>같은 날짜에는 한 학생이 여러 경기를 맡지 못합니다. 출전 확정 및 예상 팀을 확인하여 충돌을 표시합니다.</p></div></div>'+
+   '<div class="panel padded official-day-controls"><b>📅 날짜를 선택해서 운영위원 수정</b><p class="official-help">원하는 날짜를 클릭하면 그날의 1~2경기만 열립니다. 다른 날짜 배정은 그대로 유지돼요.</p>'+
+   '<div id="officialDatePicker" class="official-date-picker"></div>'+
+   '<div class="official-date-nav"><button type="button" id="officialPrevDate" class="btn">‹ 이전 날짜</button>'+
+   '<div class="official-date-title"><b id="officialSelectedDate"></b><small id="officialSelectedSummary"></small></div>'+
+   '<button type="button" id="officialNextDate" class="btn">다음 날짜 ›</button></div>'+
+   '<p id="officialDateHint" class="official-help"></p>'+
+   '<div class="official-toolbar"><button type="button" id="officialFillDate" class="btn primary">선택 날짜 빈 자리 자동배정</button><button type="button" id="officialResetDate" class="btn">선택 날짜 다시 배정</button></div></div>'+
    '<div id="officialDays"></div><div class="panel padded"><b>⚖ 학생별 담당 횟수 · 역할 분포</b><div id="officialLoads" class="official-load"></div></div>'+
    '<p class="official-help" style="margin:12px 0">🔐 운영위원 명단과 배정 정보는 기존 Firebase의 관리자 전용 저장 공간에 보관하고, 학생들이 접속하는 공개 대진표에는 표시하지 않습니다. 출력·CSV도 내부용으로 사용해 주세요.</p>';
   const ref=document.getElementById('view-share');ref.parentNode.insertBefore(section,ref);
@@ -252,6 +295,14 @@ function init(hostApi){
   });
   $('#officialAutoFill').addEventListener('click',()=>autoFill(false));
   $('#officialAutoAll').addEventListener('click',()=>autoFill(true));
+   $('#officialDatePicker').addEventListener('click',event=>{
+    const button=event.target.closest('[data-off-date]');
+    if(button)chooseDate(button.dataset.offDate);
+   });
+   $('#officialPrevDate').addEventListener('click',()=>shiftDate(-1));
+   $('#officialNextDate').addEventListener('click',()=>shiftDate(1));
+   $('#officialFillDate').addEventListener('click',()=>{if(selectedDate)autoFill(false,selectedDate);});
+   $('#officialResetDate').addEventListener('click',()=>{if(selectedDate)autoFill(true,selectedDate);});
   $('#officialExport').addEventListener('click',exportCsv);
   $('#officialPrint').addEventListener('click',printRoster);
   $('#officialBulkApply').addEventListener('click',()=>{

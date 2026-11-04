@@ -1,0 +1,40 @@
+
+/* 학생 운영위원 관리 - 관리자 전용 */
+.official-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:14px 0}
+.official-tile{background:white;border:1px solid #dce6eb;border-radius:14px;padding:15px 17px}
+.official-tile small{color:#788b9b;font-size:11px;font-weight:800;display:block}
+.official-tile strong{font-size:25px;color:#1d4056;display:block;margin:4px 0}
+.official-tile span{font-size:11px;color:#718a9b}
+.official-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.official-toolbar button{padding:9px 12px}
+.official-note{padding:12px 14px;border:1px solid #e6e2bb;background:#fffdf0;color:#7e6931;border-radius:12px;margin-bottom:13px;line-height:1.65;font-size:12px}
+.official-warn{background:#fff1eb;border:1px solid #efcbbf;color:#a34432;border-radius:8px;padding:7px 10px;margin-top:7px;font-size:11px;line-height:1.5}
+.official-help{color:#778b9b;font-size:11px;line-height:1.65}
+.official-roster-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:9px;margin:15px 0}
+.official-person{border:1px solid #e1e9ee;border-radius:12px;background:#fcfdff;padding:13px}
+.official-person .off-id{font-size:11px;color:#788da0;font-weight:900}
+.official-person .off-person-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.official-person .off-badge{font-size:10px;font-weight:850;color:#507a89;background:#e8f2f5;border-radius:9px;padding:4px 8px}
+.official-person .off-badge.off-unresolved{background:#fff0e4;color:#b16a31}
+.official-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.official-fields label{display:block;color:#6c8598;font-size:11px;font-weight:800}
+.official-fields input,.official-fields select,.official-matches select{display:block;width:100%;min-width:0;border:1px solid #d7e2ea;background:white;border-radius:8px;padding:8px;margin-top:4px;font-size:12px;color:#29475d}
+.official-fields .whole{grid-column:1/-1}
+.official-fields input:focus,.official-fields select:focus,.official-matches select:focus{outline:2px solid #73bcb0;outline-offset:1px}
+.official-day{margin:12px 0 16px;overflow:hidden}
+.official-day .day-head{display:flex;align-items:center;justify-content:space-between}
+.official-matches{padding:14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.official-game{border:1px solid #e3eaf0;background:#fff;border-radius:12px;padding:13px}
+.official-game h4{font-size:13px;margin:0 0 8px;color:#264b62}
+.official-game .match-meta{font-size:11px;color:#7c8e9c;margin-bottom:9px}
+.official-role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.official-role-grid label{font-size:11px;color:#5b7587;font-weight:900}
+.official-role-grid .valid{color:#197d61}.official-role-grid .invalid{color:#bb5b45}
+.official-load{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:8px;margin:12px 0}
+.official-load div{border-radius:9px;background:#f5f9fb;border:1px solid #e0ebf1;padding:11px}
+.official-load b{display:block;font-size:13px}.official-load small{color:#788b9b;font-size:11px}
+.official-bulk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.official-bulk textarea{max-width:420px;flex:1 1 230px;min-height:90px;padding:9px;border-radius:9px;border:1px solid #cbdce5;font:inherit;font-size:12px}
+@media(max-width:880px){.official-matches{grid-template-columns:1fr}.official-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.official-fields{grid-template-columns:1fr}.official-fields .whole{grid-column:auto}.official-role-grid{grid-template-columns:1fr}}
+@media print{#view-officials .official-toolbar,#view-officials .official-bulk,#view-officials .official-roster-wrap{display:none!important}#view-officials .official-matches{grid-template-columns:repeat(2,minmax(0,1fr))}}

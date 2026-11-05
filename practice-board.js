@@ -58,7 +58,7 @@ function renderBoard(){
    var g=m.g==='M'?'남학생부':'여학생부';
    return '<article class="gameboard-match"><div class="gameboard-meta"><span>'+g+' · '+round+'</span><span>'+esc(m.court)+'코트</span></div><div class="gameboard-pair">'+p1+' <span class="gameboard-vs">VS</span> '+p2+'</div><div class="gameboard-result">'+(m.winner?'✓ 결과 입력 완료'+(m.score?' · '+esc(m.score):''):'경기 예정 · 결과 입력 대기')+'</div></article>';
  }).join('');
- node.innerHTML='<div class="gameboard"><div class="gameboard-head"><div><h2>'+label+'</h2><p class="gameboard-note">오전 8:10~8:50 · 실시간으로 결과 반영</p></div><span class="gameboard-day">'+dateKorean(date)+'</span></div><div class="gameboard-games">'+cards+'</div></div>';
+ node.innerHTML='<div class="gameboard"><div class="gameboard-head"><div><h2>'+label+'</h2><p class="gameboard-note">오전 8:10~8:50 · 교사 입력 결과 자동 반영</p></div><span class="gameboard-day">'+dateKorean(date)+'</span></div><div class="gameboard-games">'+cards+'</div></div>';
 }
 function renderPractice(){
  var view=el('practiceDays');if(!view||!ctx)return;

@@ -60,6 +60,36 @@ button.tree-card:hover:not(:disabled){border-color:#28897a;transform:translateY(
 .rules-video-tip{font-size:12px!important;color:#7b92a0!important}
 @media(max-width:730px){.rules-video-layout{grid-template-columns:1fr;padding:16px}.rules-video-info{max-width:360px;margin:auto;text-align:center}.rules-youtube-link{margin:auto}.rules-video-vertical{max-width:330px}.rules-video-info h3{font-size:18px}}
 @media print{#view-rules{display:none!important}}
+/* 학생용 첫 화면: 블루톤 퀵 메뉴 홈 */
+.home-hero{background:linear-gradient(120deg,#122f58,#13538d 68%,#1978a9);color:white;border-radius:20px;position:relative;overflow:hidden;padding:29px 31px;display:flex;align-items:center;justify-content:space-between;gap:18px;box-shadow:0 10px 30px #0a375120}
+.home-hero::before{content:"";position:absolute;right:-45px;top:-100px;width:250px;height:250px;border:24px solid #ffffff16;border-radius:50%;pointer-events:none}
+.home-hero::after{content:"";position:absolute;right:100px;bottom:-140px;width:240px;height:240px;border:2px solid #ffffff20;border-radius:50%;pointer-events:none}
+.home-hero-kicker{font-size:12px;font-weight:800;letter-spacing:.13em;color:#bbecff;margin:0 0 8px}
+.home-hero h2{font-size:clamp(26px,3.2vw,37px);letter-spacing:-.04em;line-height:1.25;font-weight:950;margin:0}
+.home-hero p{font-size:14px;line-height:1.7;color:#daeffa;max-width:590px;margin:9px 0 0}
+.home-hero-icon{font-size:clamp(46px,6vw,88px);line-height:1;transform:rotate(-10deg);position:relative;z-index:1;flex:none}
+.home-section-title{font-size:18px;margin:23px 0 12px;letter-spacing:-.035em}
+.home-quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.home-tile{display:flex;gap:13px;align-items:center;width:100%;min-height:112px;text-align:left;border:1px solid #dce7f0;border-radius:15px;background:#fff;padding:17px;box-shadow:0 4px 13px #14344c09;color:#1c344c;transition:transform .15s,box-shadow .15s,border-color .15s}
+.home-tile:hover,.home-tile:focus-visible{transform:translateY(-2px);border-color:#74aee6;box-shadow:0 8px 20px #1c5c9b17;outline:none}
+.home-tile-icon{display:grid;place-items:center;flex:none;font-size:28px;width:55px;height:55px;background:#eaf3ff;border-radius:14px}
+.home-tile.primary{border-color:#a3c5ef;background:#f5faff}
+.home-tile.primary .home-tile-icon{background:#dcecff}
+.home-tile-title{font-size:16px;font-weight:900;line-height:1.4}
+.home-tile-caption{margin-top:4px;font-size:12px;line-height:1.5;color:#6f869a;font-weight:500}
+.home-tile-arrow{font-size:16px;margin-left:auto;color:#90a8ba}
+.home-highlight{background:#fff;border:1px solid #dbe8f1;border-radius:16px;padding:18px 21px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.home-highlight-label{font-size:12px;color:#40789a;font-weight:850;margin-bottom:5px}
+.home-highlight-text{font-size:14px;color:#24435e;font-weight:750;line-height:1.65}
+.home-highlight-sub{font-size:12px;color:#7890a1;margin-top:4px}
+.home-highlight .btn{flex:none}
+.home-admin-heading{margin:18px 0 9px;font-size:13px;font-weight:900;color:#6b8396}
+.home-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.home-admin-grid .home-tile{min-height:86px}
+@media(max-width:1020px){.home-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.home-hero{padding:24px 20px;min-height:176px}.home-hero-icon{font-size:45px;align-self:flex-end}.home-quick-grid{grid-template-columns:1fr;gap:9px}.home-tile{min-height:88px;padding:13px}.home-tile-icon{width:47px;height:47px;font-size:24px}.home-tile-title{font-size:15px}.home-highlight{display:block;padding:16px}.home-highlight .btn{margin-top:12px;width:100%}.home-admin-grid{grid-template-columns:1fr}}
+@media print{#view-home{display:none!important}}
+
 </style>
 <link rel="stylesheet" href="./draw-stage.css" />
 <link rel="stylesheet" href="./officials.css" />
@@ -71,11 +101,36 @@ button.tree-card:hover:not(:disabled){border-color:#28897a;transform:translateY(
  <div id="connectionBar" class="connection-bar" role="status"><span>🔒 <strong id="cloudStatus">오프라인 개인 관리 모드</strong> <span id="cloudHint">공유 설정 전에는 이 기기에만 저장됩니다.</span></span><span id="authArea"></span></div>
  <div id="accessWall" class="access-wall hidden"></div>
  <div id="appBody">
- <div class="top-controls"><nav class="tabs" aria-label="보기 전환"><button class="tab active" data-tab="overview">전체 현황</button><button class="tab" data-tab="schedule">경기 일정</button><button class="tab" data-tab="bracket">토너먼트 대진표</button><button class="tab" data-tab="practice">점심 연습일</button><button class="tab" data-tab="rules">🎥 경기 규칙 영상</button><button class="tab edit-only" data-tab="teams">참가팀·선수 명단</button><button class="tab edit-only" data-tab="share">학생 공개·QR</button></nav><div class="actions"><button id="exportCsv" class="btn edit-only">일정 CSV</button><button id="exportRoster" class="btn edit-only">선수명단 CSV</button><button id="exportJson" class="btn edit-only">데이터 백업</button><button id="importBtn" class="btn edit-only">백업 불러오기</button><button id="printBtn" class="btn">인쇄</button></div></div>
+ <div class="top-controls"><nav class="tabs" aria-label="보기 전환"><button class="tab active" data-tab="home">🏠 홈</button><button class="tab" data-tab="overview">전체 현황</button><button class="tab" data-tab="schedule">경기 일정</button><button class="tab" data-tab="bracket">토너먼트 대진표</button><button class="tab" data-tab="practice">점심 연습일</button><button class="tab" data-tab="rules">🎥 경기 규칙 영상</button><button class="tab edit-only" data-tab="teams">참가팀·선수 명단</button><button class="tab edit-only" data-tab="share">학생 공개·QR</button></nav><div class="actions"><button id="exportCsv" class="btn edit-only">일정 CSV</button><button id="exportRoster" class="btn edit-only">선수명단 CSV</button><button id="exportJson" class="btn edit-only">데이터 백업</button><button id="importBtn" class="btn edit-only">백업 불러오기</button><button id="printBtn" class="btn">인쇄</button></div></div>
  <input id="importFile" type="file" accept=".json,application/json" hidden />
- <div id="todayScoreboard" aria-live="polite"></div>
- <div id="stats" class="stat-grid" aria-live="polite"></div>
- <section id="view-overview" class="view"><div class="section-head"><div><h2>대회 전체 현황</h2><p>관리자는 토너먼트 대진표의 경기 상자를 눌러 세트 점수를 기록하고, 학생은 결과를 확인할 수 있습니다.</p></div><span id="overviewStart" class="pill"></span></div><div class="overview-layout"><div class="overview-panels"><div class="panel"><div class="padded" style="padding-bottom:4px"><b>📅 날짜별 경기 편성</b> <span class="muted" style="font-size:12px">· 오전 8:10 ~ 8:50</span></div><div id="overviewDays"></div></div><div class="note"><b>운영 참고</b> · 10일간 총 18경기를 진행합니다. 1~7일차는 남학생 1경기+여학생 1경기, 8일차는 여학생 준결승 2경기, 9일차 남학생 결승·10일차 여학생 결승을 하루 한 경기씩 진행합니다. 11일차는 예비일입니다. 실제 경기 사정에 맞게 일정 탭에서 날짜와 코트를 변경할 수 있어요.</div></div><div class="overview-panels"><div class="panel padded"><div class="stage-line"><b>🏆 남녀 우승팀</b><span class="stage-label">토너먼트 결과에 따라 자동 표시</span></div><div id="champions"></div></div><div class="panel padded"><div class="stage-line"><b>대회 진행 상황</b><span class="stage-label">라운드별 완료 경기</span></div><div id="roundProgress"></div></div><div class="panel padded"><div class="stage-line"><b>남은 주요 경기</b><span class="stage-label">예정된 경기 순</span></div><div id="upcoming"></div></div></div></div></section>
+
+ <section id="view-home" class="view">
+  <div class="home-hero">
+   <div><p class="home-hero-kicker">2026 OEDO VOLLEYBALL</p><h2>우리 반의 도전,<br>여기서 시작!</h2><p>대진표부터 연습 일정, 경기 결과, 포토 이벤트까지<br>궁금한 메뉴를 선택해 바로 확인하세요.</p></div>
+   <div class="home-hero-icon" aria-hidden="true">🏐</div>
+  </div>
+  <h3 class="home-section-title">📌 무엇을 확인할까요?</h3>
+  <div class="home-quick-grid" aria-label="주요 메뉴">
+   <button type="button" class="home-tile primary" data-tab="bracket"><span class="home-tile-icon" aria-hidden="true">🏆</span><span><span class="home-tile-title">토너먼트 대진표</span><span class="home-tile-caption" style="display:block">남학생부 · 여학생부 대진과 승리팀</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
+   <button type="button" class="home-tile" data-tab="schedule"><span class="home-tile-icon" aria-hidden="true">📅</span><span><span class="home-tile-title">경기 일정 · 결과</span><span class="home-tile-caption" style="display:block">날짜별 경기, 코트, 세트 점수</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
+   <button type="button" class="home-tile" data-tab="practice"><span class="home-tile-icon" aria-hidden="true">🏐</span><span><span class="home-tile-title">점심 연습일</span><span class="home-tile-caption" style="display:block">11월 9~13일 · 우리 반 연습 날짜</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
+   <button type="button" class="home-tile" data-tab="rules"><span class="home-tile-icon" aria-hidden="true">🎥</span><span><span class="home-tile-title">경기 규칙 영상</span><span class="home-tile-caption" style="display:block">짧은 영상으로 규칙 살펴보기</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
+   <button type="button" class="home-tile" data-tab="overview"><span class="home-tile-icon" aria-hidden="true">📊</span><span><span class="home-tile-title">대회 전체 현황</span><span class="home-tile-caption" style="display:block">오늘의 경기 전광판과 진행 현황</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
+   <button type="button" class="home-tile" data-tab="photo" id="homePhotoCard"><span class="home-tile-icon" aria-hidden="true">📸</span><span><span class="home-tile-title">포토 이벤트</span><span class="home-tile-caption" style="display:block">경기 사진 제출하고 추첨 참여!</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
+  </div>
+  <div class="home-highlight" aria-live="polite">
+   <div><div class="home-highlight-label" id="homeMatchLabel">📢 다음 경기 안내</div><div class="home-highlight-text" id="homeMatchText">경기 정보를 불러오는 중입니다.</div><div class="home-highlight-sub" id="homeMatchSub">오전 8:10~8:50</div></div>
+   <button type="button" class="btn primary" data-tab="schedule">일정 자세히 보기</button>
+  </div>
+  <div class="edit-only" id="homeAdminPanel">
+   <h3 class="home-admin-heading">🔒 교사용 관리 바로가기</h3>
+   <div class="home-admin-grid">
+    <button type="button" class="home-tile" data-tab="teams"><span class="home-tile-icon" aria-hidden="true">👥</span><span><span class="home-tile-title">참가팀 · 선수 명단</span><span class="home-tile-caption" style="display:block">팀 정보, 대표자 지정</span></span></button>
+    <button type="button" class="home-tile" data-tab="share"><span class="home-tile-icon" aria-hidden="true">⚙️</span><span><span class="home-tile-title">학생 공개 · QR</span><span class="home-tile-caption" style="display:block">대회 자료 게시 및 공유</span></span></button>
+   </div>
+  </div>
+ </section>
+ <section id="view-overview" class="view hidden"><div class="section-head"><div><h2>대회 전체 현황</h2><p>관리자는 토너먼트 대진표의 경기 상자를 눌러 세트 점수를 기록하고, 학생은 결과를 확인할 수 있습니다.</p></div><span id="overviewStart" class="pill"></span></div><div id="todayScoreboard" aria-live="polite"></div><div id="stats" class="stat-grid" aria-live="polite"></div><div class="overview-layout"><div class="overview-panels"><div class="panel"><div class="padded" style="padding-bottom:4px"><b>📅 날짜별 경기 편성</b> <span class="muted" style="font-size:12px">· 오전 8:10 ~ 8:50</span></div><div id="overviewDays"></div></div><div class="note"><b>운영 참고</b> · 10일간 총 18경기를 진행합니다. 1~7일차는 남학생 1경기+여학생 1경기, 8일차는 여학생 준결승 2경기, 9일차 남학생 결승·10일차 여학생 결승을 하루 한 경기씩 진행합니다. 11일차는 예비일입니다. 실제 경기 사정에 맞게 일정 탭에서 날짜와 코트를 변경할 수 있어요.</div></div><div class="overview-panels"><div class="panel padded"><div class="stage-line"><b>🏆 남녀 우승팀</b><span class="stage-label">토너먼트 결과에 따라 자동 표시</span></div><div id="champions"></div></div><div class="panel padded"><div class="stage-line"><b>대회 진행 상황</b><span class="stage-label">라운드별 완료 경기</span></div><div id="roundProgress"></div></div><div class="panel padded"><div class="stage-line"><b>남은 주요 경기</b><span class="stage-label">예정된 경기 순</span></div><div id="upcoming"></div></div></div></div></section>
  <section id="view-schedule" class="view hidden"><div class="section-head"><div><h2>경기 일정표</h2><p>날짜·코트·점수를 수정하고 각 경기에서 승리팀을 선택하세요.</p></div></div><div class="panel padded tools-panel"><label for="startDate">기본 시작일</label><input type="date" id="startDate" value="2026-11-16"/><button id="applyStart" class="btn primary">평일 일정 다시 배치</button><span class="muted" style="font-size:12px">기본 편성: 1~7일차 남녀 각 1경기 · 8일차 여 준결승 2경기 · 9~10일차 결승 1경기씩</span></div><div id="scheduleBody"></div></section>
  <section id="view-bracket" class="view hidden"><div class="section-head"><div><h2>🏆 토너먼트 대진표</h2><p>제공한 PDF 예시처럼 아래 참가팀에서 시작해 위로 우승팀이 결정되는 나무형 대진표입니다.</p></div><button id="redraw" class="btn warn edit-only">🔀 대진 다시 추첨</button></div><div class="tree-guide"><b>읽는 법</b> · 아래쪽 참가팀 → 예비전(필요한 팀만) → 8강 → 4강 → 결승 → 맨 위 우승팀. <span class="edit-only"><b>교사는 경기 상자를 클릭해 승리팀과 점수를 입력</b>할 수 있습니다.</span> 휴대전화에서는 좌우로 밀어 확인하세요.</div><div class="tree-switcher"><div class="tree-gender-tabs"><button class="tree-gender on" data-gender="M">🔵 남학생부 · 9팀</button><button class="tree-gender" data-gender="W">🔴 여학생부 · 11팀</button></div><div class="tree-zoom"><span>크기</span><button data-zoom="-" title="축소">−</button><span id="treeZoomLabel">85%</span><button data-zoom="+" title="확대">＋</button></div></div><div id="bracketBody"></div></section>
  <section id="view-practice" class="view hidden">
@@ -155,7 +210,7 @@ const dayLabel=s=>{const d=toDate(s);return `${d.getMonth()+1}월 ${d.getDate()}
 const sortBySchedule=(a,b)=>(a.date||'').localeCompare(b.date||'')||a.court-b.court||a.id.localeCompare(b.id);
 const deepClone=o=>JSON.parse(JSON.stringify(o));
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
-let state,tab='bracket',toastTimer,bracketGender='M',treeZoom=0.85,activeResultMatch=null;
+let state,tab='home',toastTimer,bracketGender='M',treeZoom=0.85,activeResultMatch=null;
 function defaultState(){const teams={M:Array.from({length:9},(_,i)=>({id:`M${pad(i+1)}`,name:`남학생 ${i+1}팀`,className:'',members:Array(6).fill(''),representativeSlot:null})),W:Array.from({length:11},(_,i)=>({id:`W${pad(i+1)}`,name:`여학생 ${i+1}팀`,className:'',members:Array(6).fill(''),representativeSlot:null}))};return {version:2,startDate:'2026-11-16',teams,matches:{},reserveDate:'',createdAt:new Date().toISOString()};}
 function teamById(id){return [...state.teams.M,...state.teams.W].find(t=>t.id===id)}
 function nameById(id){return teamById(id)?.name||'미정'}
@@ -323,7 +378,27 @@ function renderTeams(){
  return `<article class="panel roster-team" data-roster-team="${t.id}"><div class="roster-head"><strong>${escapeHtml(t.id)} · ${escapeHtml(t.name)}</strong><span class="roster-status"><span class="player-count ${count>=4&&count<=6?'valid':'invalid'}">${count}/6명 입력</span><span class="rep-label ${rep!==null?'is-set':''}">${rep===null?'대표자 미지정':'★ 대표: '+escapeHtml(t.members[rep].trim())}</span></span></div><div class="team-meta"><div><label>팀명<input data-teamname="${t.id}" value="${escapeHtml(t.name)}" maxlength="50" placeholder="팀 이름" /></label></div><div><label>학급<input data-teamclass="${t.id}" value="${escapeHtml(t.className)}" maxlength="20" placeholder="예: 6-1" /></label></div></div><details class="roster-details" data-roster="${t.id}"><summary>선수 명단 펼치기 · 4~6명 등록</summary><div class="player-grid">${t.members.map((nm,i)=>`<div class="slot ${rep===i?'is-representative':''}"><label>${i+1}번 선수<input data-player="${t.id}" data-slot="${i}" value="${escapeHtml(nm)}" maxlength="30" autocomplete="off" placeholder="학생 이름" /></label><button type="button" class="rep-toggle ${rep===i?'selected':''}" data-representative="${t.id}" data-slot="${i}" aria-pressed="${rep===i?'true':'false'}">${rep===i?'★ 대표자':'☆ 대표 지정'}</button></div>`).join('')}</div><p class="tiny-note">팀별 대표자 1명을 선택하세요. ★ 대표자를 다시 누르면 해제됩니다.<br>선수 이름과 대표자 정보는 교사용으로만 저장되며 학생 공개 화면에는 표시되지 않습니다.</p></details></article>`}).join('')}</div></div>`).join('');
 }
 function canEdit(){return !isHttp || (!!isAdmin&&!publicMode);}
-function render(){if(!canEdit()&&['teams','share','draw','officials'].includes(tab))tab='overview';stats();renderOverview();renderSchedule();renderBracket();window.OEDO_PRACTICE_BOARD?.render();if(canEdit())renderTeams();document.querySelectorAll('.edit-only').forEach(x=>x.classList.toggle('hidden',!canEdit()));document.querySelectorAll('.view').forEach(el=>el.classList.toggle('hidden',el.id!==`view-${tab}`));document.querySelectorAll('.tab').forEach(el=>{el.classList.toggle('active',el.dataset.tab===tab);el.setAttribute('aria-selected',el.dataset.tab===tab?'true':'false');});if(canEdit()){renderShare();window.OEDO_OFFICIALS?.render();}}
+
+function renderHome(){
+ const photo=document.getElementById('homePhotoCard');
+ if(photo)photo.classList.toggle('hidden',!document.querySelector('.tabs [data-tab="photo"]:not(.hidden)'));
+ const title=$('#homeMatchLabel'),body=$('#homeMatchText'),sub=$('#homeMatchSub');
+ if(!title||!body||!sub)return;
+ const list=allMatches().filter(m=>typeof m.date==='string'&&m.date.length===10&&m.date[4]==='-');
+ if(!list.length){title.textContent='📢 경기 안내';body.textContent='대진표와 경기 일정을 확인해 주세요.';sub.textContent='';return;}
+ const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+ const obj=Object.fromEntries(parts.map(p=>[p.type,p.value]));
+ const today=obj.year+'-'+obj.month+'-'+obj.day;
+ const future=list.find(m=>m.date>=today);
+ const chosenDate=future?future.date:list[list.length-1].date;
+ const matches=list.filter(m=>m.date===chosenDate);
+ title.textContent=future?(chosenDate===today?'📣 오늘의 경기':'📅 다음 경기'):'🏁 마지막 경기';
+ body.textContent=matches.map(m=>{const pair=participants(m);return (m.g==='M'?'남학생부':'여학생부')+' · '+m.court+'코트 · '+(pair[0]?nameById(pair[0]):'승자 대기')+' VS '+(pair[1]?nameById(pair[1]):'승자 대기')+(m.winner?' (경기 완료)':'');}).join('   |   ');
+ const d=toDate(chosenDate);
+ sub.textContent=(d.getMonth()+1)+'월 '+d.getDate()+'일('+weekdayNames[d.getDay()]+') · 오전 8:10~8:50';
+}
+
+function render(){if(!canEdit()&&['teams','share','draw','officials'].includes(tab))tab='overview';stats();renderOverview();renderSchedule();renderBracket();renderHome();window.OEDO_PRACTICE_BOARD?.render();if(canEdit())renderTeams();document.querySelectorAll('.edit-only').forEach(x=>x.classList.toggle('hidden',!canEdit()));document.querySelectorAll('.view').forEach(el=>el.classList.toggle('hidden',el.id!==`view-${tab}`));document.querySelectorAll('.tab').forEach(el=>{el.classList.toggle('active',el.dataset.tab===tab);el.setAttribute('aria-selected',el.dataset.tab===tab?'true':'false');});if(canEdit()){renderShare();window.OEDO_OFFICIALS?.render();}}
 
 function setTab(v){if(!canEdit()&&['teams','share','draw','officials'].includes(v))return;tab=v;render();window.scrollTo({top:0,behavior:'smooth'});}
 function download(content,type,filename){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}

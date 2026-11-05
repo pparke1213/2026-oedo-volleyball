@@ -30,6 +30,66 @@ function randomIndex(length){
  }
  return Math.floor(Math.random()*length);
 }
+
+/* 실제 참가팀의 학급을 기준으로 같은 반의 남녀 팀을 한 묶음으로 관리합니다. */
+function classKey(value){
+ var v=String(value||'').replace(/\s+/g,'').replace(/학년/g,'').replace(/반/g,'').replace(/[‐‑‒–—]/g,'-');
+ if(!v)return '';
+ var m=v.match(/^6[-.]?0?([1-9]|10)$/)||v.match(/^0?([1-9]|10)$/);
+ return m?'6-'+Number(m[1]):v;
+}
+function classGroups(){
+ var grouped=new Map(),missing=[];
+ teams().forEach(function(t){
+  var k=classKey(t.className);
+  if(!k){missing.push(t.id+' · '+t.name);return;}
+  if(!grouped.has(k))grouped.set(k,{className:k,teams:[]});
+  grouped.get(k).teams.push(t);
+ });
+ return {groups:Array.from(grouped.values()),missing:missing};
+}
+/* 현재 남은 날짜별 빈자리로 나머지 학급 묶음이 전부 들어가는지를 검사합니다.
+   잘못된 순서로 날짜를 뽑아 마지막에 4팀 정원을 맞출 수 없게 되는 상황을 방지합니다. */
+function canPack(sizes,spaces){
+ var ordered=sizes.slice().sort(function(a,b){return b-a;}),memo=new Set();
+ if(ordered.some(function(n){return n>DAY_CAPACITY;}))return false;
+ if(ordered.reduce(function(a,b){return a+b;},0)>spaces.reduce(function(a,b){return a+b;},0))return false;
+ function check(i,cap){
+  if(i===ordered.length)return true;
+  var key=i+':'+cap.slice().sort(function(a,b){return b-a;}).join(',');
+  if(memo.has(key))return false;
+  var visited=new Set();
+  for(var d=0;d<cap.length;d++){
+   if(cap[d]<ordered[i]||visited.has(cap[d]))continue;
+   visited.add(cap[d]);
+   cap[d]-=ordered[i];
+   if(check(i+1,cap)){cap[d]+=ordered[i];return true;}
+   cap[d]+=ordered[i];
+  }
+  memo.add(key);return false;
+ }
+ return check(0,spaces.slice());
+}
+function practiceCheck(){
+ var grouped=classGroups(),as=assignments(),issues=[],remaining=[],done=0;
+ if(grouped.missing.length)issues.push('학급이 입력되지 않은 팀 '+grouped.missing.length+'개가 있어요. 「참가팀·선수 명단」에서 모든 팀의 학급을 먼저 입력해 주세요.');
+ grouped.groups.forEach(function(group){
+  if(group.teams.length>DAY_CAPACITY)issues.push(group.className+'에는 '+group.teams.length+'팀이 있어 하루 최대 4팀 제한을 초과합니다.');
+  var dates=Array.from(new Set(group.teams.map(function(t){return as[t.id];}).filter(Boolean)));
+  if(dates.length>1)issues.push(group.className+' 팀이 서로 다른 날짜로 배정되어 있어요. 「전체 추첨 초기화」 후 다시 추첨해 주세요.');
+  else if(dates.length===1&&group.teams.some(function(t){return !as[t.id];}))
+   issues.push(group.className+'의 팀 일부만 기존 방식으로 배정되어 있어요. 「전체 추첨 초기화」 후 다시 추첨해 주세요.');
+  else if(!dates.length)remaining.push(group);
+  else done++;
+ });
+ DAYS.forEach(function(d){if(countFor(d.date)>DAY_CAPACITY)issues.push(dateLabel(d.date)+'에 4팀을 초과해 배정되어 있어요.');});
+ Object.keys(as).forEach(function(id){if(!team(id)||!DAYS.some(function(d){return d.date===as[id];}))issues.push('이전 기록 중 잘못된 배정이 있어요. 전체 추첨 초기화가 필요합니다.');});
+ var spaces=DAYS.map(function(d){return Math.max(0,DAY_CAPACITY-countFor(d.date));});
+ if(!issues.length&&!canPack(remaining.map(function(g){return g.teams.length;}),spaces))
+  issues.push('현재 학급별 팀 수로는 하루 4팀씩 나누는 배정이 불가능합니다. 학급 및 팀 구성을 확인해 주세요.');
+ return {groups:grouped.groups,remaining:remaining,done:done,issues:issues,spaces:spaces};
+}
+
 function dateLabel(date){return (DAYS.find(function(d){return d.date===date;})||{}).label||date;}
 function dateKorean(date){
  if(!/^\d{4}-\d{2}-\d{2}$/.test(date||''))return date||'';
@@ -63,60 +123,87 @@ function renderBoard(){
 }
 function renderPractice(){
  var view=el('practiceDays');if(!view||!ctx)return;
- var as=assignments(),list=teams(),cnt=allAssigned(),total=list.length;
+ var as=assignments(),list=teams(),cnt=allAssigned(),total=list.length,check=practiceCheck();
  var count=el('practiceProgress');if(count)count.textContent=cnt+' / '+total+'팀 배정 완료';
- var remaining=list.filter(function(t){return !as[t.id];});
  var draw=el('practiceDrawBtn');
  if(draw){
-   draw.disabled=!ctx.canEdit()||!remaining.length;
-   draw.textContent=remaining.length?'🎲 클릭해서 다음 팀 추첨 · '+(cnt+1)+' / '+total:'🎉 20팀 추첨 완료!';
+   draw.disabled=!ctx.canEdit()||!!check.issues.length||!check.remaining.length;
+   draw.textContent=check.remaining.length?'🎲 다음 학급 추첨 · '+(check.done+1)+' / '+check.groups.length:'🎉 학급별 추첨 완료!';
  }
+ var msg=el('practiceDrawMessage');
+ if(msg){msg.textContent=check.issues.join('\n');msg.classList.toggle('hidden',!check.issues.length);}
  var admin=el('practiceAdmin');if(admin)admin.classList.toggle('hidden',!ctx.canEdit());
- var undo=el('practiceUndoBtn');if(undo)undo.disabled=!ctx.canEdit()||!ctx.getState().practice?.lastTeamId||!as[ctx.getState().practice.lastTeamId];
+ var p=ctx.getState().practice||{};
+ var undo=el('practiceUndoBtn');
+ var undoIds=Array.isArray(p.lastGroupIds)?p.lastGroupIds:[];
+ if(undo)undo.disabled=!ctx.canEdit()||!undoIds.length||!undoIds.every(function(id){return !!as[id];});
  var reset=el('practiceResetBtn');if(reset)reset.disabled=!ctx.canEdit()||cnt===0;
  var csv=el('practiceCsvBtn');if(csv)csv.disabled=!ctx.canEdit()||cnt===0;
- var last=ctx.getState().practice?.lastTeamId||null;
  var announce=el('practiceReveal');
  if(announce){
-   if(last&&as[last]&&ctx.canEdit()){
+   if(undoIds.length&&undoIds.every(function(id){return as[id]===as[undoIds[0]];})&&ctx.canEdit()){
      announce.classList.remove('hidden');
-     announce.innerHTML='<div class="team-name">🎉 방금 뽑은 팀: '+esc(displayTeam(last))+'</div><div class="big-date">'+esc(dateLabel(as[last]))+'</div><div>점심시간 체육관 연습일 확정!</div>';
-     if(lastRevealId!==last){announce.classList.remove('new-draw');void announce.offsetWidth;announce.classList.add('new-draw');lastRevealId=last;}
+     var key=classKey(team(undoIds[0])?.className),names=undoIds.map(displayTeam).join(' / ');
+     announce.innerHTML='<div class="team-name">🎉 '+esc(key)+' · '+undoIds.length+'팀 함께 배정</div><div class="big-date">'+esc(dateLabel(as[undoIds[0]]))+'</div><div class="team-name">'+esc(names)+'</div>';
+     if(lastRevealId!==undoIds.join(',')){announce.classList.remove('new-draw');void announce.offsetWidth;announce.classList.add('new-draw');lastRevealId=undoIds.join(',');}
    }else{announce.classList.add('hidden');announce.innerHTML='';lastRevealId=null;}
  }
  view.innerHTML=DAYS.map(function(d){
-   var ids=list.filter(function(t){return as[t.id]===d.date;});
-   var entries=ids.map(function(t){return '<li><span class="team-kind">'+(t.id[0]==='M'?'남':'여')+'</span>'+esc(t.name)+(t.className?' <span class="team-kind">'+esc(t.className)+'</span>':'')+'</li>';}).join('');
-   for(var i=ids.length;i<DAY_CAPACITY;i++)entries+='<li class="empty">미배정</li>';
-   return '<article class="panel practice-day'+(ids.length===DAY_CAPACITY?' is-full':'')+'"><header><h3>'+d.label+'</h3><span class="practice-count">'+ids.length+' / '+DAY_CAPACITY+'팀</span></header><ol>'+entries+'</ol></article>';
+   var groups=check.groups.map(function(g){return {className:g.className,teams:g.teams.filter(function(t){return as[t.id]===d.date;})};}).filter(function(g){return g.teams.length;});
+   groups.sort(function(a,b){return a.className.localeCompare(b.className,'ko',{numeric:true});});
+   var used=groups.reduce(function(n,g){return n+g.teams.length;},0);
+   var entries=groups.map(function(g){
+     var names=g.teams.map(function(t){return '<div class="practice-group-team"><span class="team-kind">'+(t.id[0]==='M'?'남':'여')+'</span>'+esc(t.name)+'</div>';}).join('');
+     return '<li class="practice-group"><strong>'+esc(g.className)+'</strong><span class="practice-group-count">'+g.teams.length+'팀</span><div class="practice-group-teams">'+names+'</div></li>';
+   }).join('');
+   for(var i=used;i<DAY_CAPACITY;i++)entries+='<li class="empty">미배정</li>';
+   return '<article class="panel practice-day'+(used===DAY_CAPACITY?' is-full':'')+'"><header><h3>'+d.label+'</h3><span class="practice-count">'+used+' / '+DAY_CAPACITY+'팀</span></header><ol>'+entries+'</ol></article>';
  }).join('');
 }
 function draw(){
  if(!ctx||!ctx.canEdit())return;
- // 연속 더블클릭으로 두 팀이 한 번에 뽑히지 않도록 최소 간격을 둡니다.
  var now=Date.now();if(now-lastDrawAt<450)return;
- var remaining=teams().filter(function(t){return !assignments()[t.id];});
- if(!remaining.length){ctx.toast('20팀의 연습일 추첨이 모두 끝났습니다.');return;}
- var available=[];
- DAYS.forEach(function(d){var open=Math.max(0,DAY_CAPACITY-countFor(d.date));for(var i=0;i<open;i++)available.push(d.date);});
- if(!available.length){ctx.toast('모든 연습일 배정이 끝났습니다.');return;}
- // 추첨 버튼 한 번으로 "아직 안 뽑힌 팀"과 "남은 날짜 한 자리"를 동시에 무작위 선택합니다.
- var id=remaining[randomIndex(remaining.length)].id;
- var picked=available[randomIndex(available.length)],p=statePractice();
- p.assignments[id]=picked;p.lastTeamId=id;lastDrawAt=now;
- lastRevealId=null;ctx.save();ctx.render();ctx.toast('🎉 '+displayTeam(id)+' → '+dateLabel(picked)+' 배정 완료!');
+ var status=practiceCheck();
+ if(status.issues.length){ctx.toast(status.issues[0]);return;}
+ if(!status.remaining.length){ctx.toast('모든 학급의 연습일 추첨이 끝났습니다.');return;}
+ // 남은 학급을 어떤 날짜에 배정하더라도 이후 나머지 학급의 정원 충족이 가능해야 합니다.
+ var viableGroups=[];
+ status.remaining.forEach(function(group){
+  var dates=[];
+  DAYS.forEach(function(d,i){
+   var size=group.teams.length;
+   if(status.spaces[i]<size)return;
+   var leftover=status.spaces.slice();leftover[i]-=size;
+   var rest=status.remaining.filter(function(g){return g!==group;}).map(function(g){return g.teams.length;});
+   if(canPack(rest,leftover))dates.push(d.date);
+  });
+  if(dates.length)viableGroups.push({group:group,dates:dates});
+ });
+ if(!viableGroups.length){ctx.toast('남은 학급을 배정할 수 없습니다. 학급별 팀 수를 확인해 주세요.');return;}
+ var choice=viableGroups[randomIndex(viableGroups.length)];
+ var picked=choice.dates[randomIndex(choice.dates.length)];
+ var p=statePractice(),ids=choice.group.teams.map(function(t){return t.id;});
+ ids.forEach(function(id){p.assignments[id]=picked;});
+ p.lastGroupIds=ids;
+ p.lastTeamId=ids[0]; // 예전 데이터와의 호환성을 위해 유지
+ lastDrawAt=now;lastRevealId=null;
+ ctx.save();ctx.render();ctx.toast('🎉 '+choice.group.className+' · '+ids.length+'팀 → '+dateLabel(picked)+' 배정 완료!');
 }
 function undo(){
- if(!ctx||!ctx.canEdit())return;var p=statePractice(),id=p.lastTeamId;
- if(!id||!p.assignments[id])return;
- if(!window.confirm(displayTeam(id)+'의 최근 추첨 결과를 취소할까요?'))return;
- delete p.assignments[id];p.lastTeamId=null;lastRevealId=null;ctx.save();ctx.render();ctx.toast('최근 추첨 1건을 취소했습니다.');
+ if(!ctx||!ctx.canEdit())return;
+ var p=statePractice(),ids=Array.isArray(p.lastGroupIds)?p.lastGroupIds:[];
+ if(!ids.length||!ids.every(function(id){return !!p.assignments[id];}))return;
+ var className=classKey(team(ids[0])?.className)||'최근 학급';
+ if(!window.confirm(className+'의 최근 추첨 '+ids.length+'팀을 함께 취소할까요?'))return;
+ ids.forEach(function(id){delete p.assignments[id];});
+ p.lastGroupIds=null;p.lastTeamId=null;lastRevealId=null;
+ ctx.save();ctx.render();ctx.toast('최근 학급 추첨을 취소했습니다.');
 }
 function reset(){
  if(!ctx||!ctx.canEdit()||!allAssigned())return;
  if(!window.confirm('점심시간 연습일 추첨 결과를 모두 삭제하고 처음부터 다시 시작할까요?'))return;
  if(!window.confirm('최종 확인: 20팀의 연습일 배정 기록이 모두 사라집니다. 계속할까요?'))return;
- var p=statePractice();p.assignments={};p.lastTeamId=null;lastRevealId=null;ctx.save();ctx.render();ctx.toast('추첨 기록을 초기화했습니다.');
+ var p=statePractice();p.assignments={};p.lastTeamId=null;p.lastGroupIds=null;lastRevealId=null;ctx.save();ctx.render();ctx.toast('추첨 기록을 초기화했습니다.');
 }
 function csv(){
  if(!ctx||!ctx.canEdit())return;

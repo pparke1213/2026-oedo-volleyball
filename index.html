@@ -70,8 +70,8 @@ button.tree-card:hover:not(:disabled){border-color:#28897a;transform:translateY(
  <section id="view-practice" class="view hidden">
  <div class="section-head"><div><h2>🏐 점심시간 체육관 연습일</h2><p>2026년 11월 9일(월)~13일(금) · 남녀 총 20팀 · 하루 4팀</p></div><span class="pill" id="practiceProgress">0 / 20팀 배정 완료</span></div>
  <div id="practiceAdmin" class="panel practice-control hidden">
-   <button type="button" id="practiceDrawBtn" class="btn primary practice-oneclick">🎲 다음 학급 추첨 · 1 / 10</button>
-   <p class="practice-status">같은 반의 남녀 팀은 <b>한 번의 추첨으로 같은 날짜에 함께 배정</b>됩니다. 하루 최대 4팀이며, 버튼을 계속 누르면 전체 학급 배정이 완료됩니다. (교사 전용 안내)</p>
+   <button type="button" id="practiceDrawBtn" class="btn primary practice-oneclick">🎲 다음 추첨</button>
+   <p class="practice-status">버튼을 한 번 누를 때마다 다음 추첨 결과가 나타납니다. 결과는 자동 저장됩니다.</p>
    <p class="practice-draw-message hidden" id="practiceDrawMessage" role="alert"></p>
    <div id="practiceReveal" class="practice-reveal hidden" aria-live="polite"></div>
    <div class="practice-tools"><button type="button" class="btn" id="practiceUndoBtn">↩ 최근 추첨 취소</button><button type="button" class="btn" id="practiceCsvBtn">📄 일정표 CSV 저장</button><button type="button" class="btn warn" id="practiceResetBtn">전체 추첨 초기화</button></div>

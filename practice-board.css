@@ -19,6 +19,9 @@
 .practice-control-line label{font-weight:800;font-size:12px;color:#5b7585;flex:1;min-width:210px}
 .practice-control-line select{display:block;width:100%;margin-top:5px;padding:11px 10px;border-radius:9px;border:1px solid #cfdce3;background:white}
 .practice-control-line .btn{padding:12px 15px;font-size:13px}
+.practice-oneclick{display:block;width:100%;min-height:92px;padding:24px 14px!important;border:0!important;border-radius:16px!important;background:linear-gradient(110deg,#0c907d,#168bba)!important;color:#fff!important;box-shadow:0 7px 17px #147c9a37;font-size:clamp(16px,2.4vw,24px)!important;font-weight:900!important;white-space:normal!important;line-height:1.35}
+.practice-oneclick:not(:disabled):hover{filter:brightness(1.06);transform:translateY(-1px)}
+.practice-oneclick:disabled{background:#d9e8e7!important;color:#3d716b!important;box-shadow:none;opacity:.88}
 .practice-status{margin:12px 0 0;font-size:12px;color:#617487}
 .practice-reveal{margin-top:15px;border-radius:13px;padding:17px;text-align:center;background:linear-gradient(105deg,#fff3d6,#fdf7e9);color:#7f5415;border:1px solid #e5cf91}
 .practice-reveal .big-date{font-size:clamp(19px,3vw,29px);font-weight:950;margin:2px 0 5px}

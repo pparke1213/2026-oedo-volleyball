@@ -11,6 +11,7 @@ var DAYS=[
 var ctx=null;
 var lastRevealId=null;
 var DAY_CAPACITY=4;
+var lastDrawAt=0;
 function el(id){return document.getElementById(id);}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function teams(){var s=ctx.getState();return s.teams.M.concat(s.teams.W);}
@@ -65,14 +66,11 @@ function renderPractice(){
  var as=assignments(),list=teams(),cnt=allAssigned(),total=list.length;
  var count=el('practiceProgress');if(count)count.textContent=cnt+' / '+total+'팀 배정 완료';
  var remaining=list.filter(function(t){return !as[t.id];});
- var select=el('practiceTeamSelect');
- if(select){
-   var previous=select.value;
-   select.innerHTML='<option value="">-- 추첨할 팀 선택 --</option>'+remaining.map(function(t){return '<option value="'+esc(t.id)+'">'+esc(displayTeam(t.id))+'</option>';}).join('');
-   if(remaining.some(function(t){return t.id===previous;}))select.value=previous;
-   select.disabled=!ctx.canEdit()||!remaining.length;
+ var draw=el('practiceDrawBtn');
+ if(draw){
+   draw.disabled=!ctx.canEdit()||!remaining.length;
+   draw.textContent=remaining.length?'🎲 클릭해서 다음 팀 추첨 · '+(cnt+1)+' / '+total:'🎉 20팀 추첨 완료!';
  }
- var draw=el('practiceDrawBtn');if(draw)draw.disabled=!ctx.canEdit()||!remaining.length;
  var admin=el('practiceAdmin');if(admin)admin.classList.toggle('hidden',!ctx.canEdit());
  var undo=el('practiceUndoBtn');if(undo)undo.disabled=!ctx.canEdit()||!ctx.getState().practice?.lastTeamId||!as[ctx.getState().practice.lastTeamId];
  var reset=el('practiceResetBtn');if(reset)reset.disabled=!ctx.canEdit()||cnt===0;
@@ -95,14 +93,17 @@ function renderPractice(){
 }
 function draw(){
  if(!ctx||!ctx.canEdit())return;
- var select=el('practiceTeamSelect'),id=select?.value;
- if(!id){ctx.toast('추첨할 팀을 먼저 선택해 주세요.');return;}
- if(!team(id)||assignments()[id]){ctx.toast('이미 배정되었거나 존재하지 않는 팀이에요.');return;}
+ // 연속 더블클릭으로 두 팀이 한 번에 뽑히지 않도록 최소 간격을 둡니다.
+ var now=Date.now();if(now-lastDrawAt<450)return;
+ var remaining=teams().filter(function(t){return !assignments()[t.id];});
+ if(!remaining.length){ctx.toast('20팀의 연습일 추첨이 모두 끝났습니다.');return;}
  var available=[];
  DAYS.forEach(function(d){var open=Math.max(0,DAY_CAPACITY-countFor(d.date));for(var i=0;i<open;i++)available.push(d.date);});
  if(!available.length){ctx.toast('모든 연습일 배정이 끝났습니다.');return;}
+ // 추첨 버튼 한 번으로 "아직 안 뽑힌 팀"과 "남은 날짜 한 자리"를 동시에 무작위 선택합니다.
+ var id=remaining[randomIndex(remaining.length)].id;
  var picked=available[randomIndex(available.length)],p=statePractice();
- p.assignments[id]=picked;p.lastTeamId=id;
+ p.assignments[id]=picked;p.lastTeamId=id;lastDrawAt=now;
  lastRevealId=null;ctx.save();ctx.render();ctx.toast('🎉 '+displayTeam(id)+' → '+dateLabel(picked)+' 배정 완료!');
 }
 function undo(){

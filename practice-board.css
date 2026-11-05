@@ -1,0 +1,43 @@
+/* 외도초 2026: 오늘의 경기 전광판 및 점심 연습일 추첨 */
+#todayScoreboard{margin:14px 0 2px}
+.gameboard{border:1px solid #bfd5e3;background:linear-gradient(115deg,#163650,#1b5264);color:#fff;border-radius:18px;padding:19px 22px;box-shadow:0 8px 20px #12344c1a}
+.gameboard-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:13px}
+.gameboard-head h2{font-size:19px;margin:0;font-weight:900}
+.gameboard-head .gameboard-day{font-weight:800;font-size:13px;color:#e1f1fb}
+.gameboard-note{font-size:12px;color:#bcd5e0;margin:4px 0 0}
+.gameboard-games{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.gameboard-match{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:12px 14px}
+.gameboard-meta{display:flex;justify-content:space-between;gap:6px;color:#d6edf2;font-size:12px;font-weight:750;margin-bottom:8px}
+.gameboard-pair{font-size:16px;font-weight:900;line-height:1.55;overflow-wrap:anywhere}
+.gameboard-pair .gameboard-vs{font-size:12px;color:#c4dce4;font-weight:600;padding:0 5px}
+.gameboard-pair .gameboard-winner{color:#ffe9a4}
+.gameboard-result{margin-top:8px;font-size:12px;font-weight:750;color:#f3e7bc}
+.practice-intro{background:#eaf5f7;border:1px solid #c9e1e4;padding:15px 18px;border-radius:13px;margin:8px 0 16px}
+.practice-intro strong{color:#14576a}
+.practice-control{padding:19px;margin-bottom:14px}
+.practice-control-line{display:flex;align-items:end;gap:11px;flex-wrap:wrap}
+.practice-control-line label{font-weight:800;font-size:12px;color:#5b7585;flex:1;min-width:210px}
+.practice-control-line select{display:block;width:100%;margin-top:5px;padding:11px 10px;border-radius:9px;border:1px solid #cfdce3;background:white}
+.practice-control-line .btn{padding:12px 15px;font-size:13px}
+.practice-status{margin:12px 0 0;font-size:12px;color:#617487}
+.practice-reveal{margin-top:15px;border-radius:13px;padding:17px;text-align:center;background:linear-gradient(105deg,#fff3d6,#fdf7e9);color:#7f5415;border:1px solid #e5cf91}
+.practice-reveal .big-date{font-size:clamp(19px,3vw,29px);font-weight:950;margin:2px 0 5px}
+.practice-reveal .team-name{font-size:13px;font-weight:700}
+.practice-reveal.new-draw{animation:practice-pop .48s ease}
+@keyframes practice-pop{0%{transform:scale(.94);opacity:.4}100%{transform:scale(1);opacity:1}}
+.practice-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.practice-days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}
+.practice-day{overflow:hidden;padding:0 0 12px}
+.practice-day header{display:flex;justify-content:space-between;gap:4px;align-items:center;padding:15px 13px 11px;border-bottom:1px solid #e5edf2}
+.practice-day h3{margin:0;font-size:15px}
+.practice-day .practice-count{font-size:11px;font-weight:850;background:#e8f2f6;border-radius:20px;color:#477080;padding:5px 8px;white-space:nowrap}
+.practice-day.is-full .practice-count{background:#e8f7ed;color:#257353}
+.practice-day ol{margin:0;padding:12px 12px 0;list-style:none;display:grid;gap:7px}
+.practice-day li{min-height:41px;display:flex;align-items:center;border-radius:9px;padding:9px 10px;line-height:1.3;font-size:12px;font-weight:750;background:#f2f7f9;overflow-wrap:anywhere}
+.practice-day li.empty{font-weight:500;color:#a4b2bf;background:#fafbfd;border:1px dashed #d9e3e9}
+.practice-day .team-kind{font-size:10px;font-weight:850;margin-right:5px;color:#577b90;white-space:nowrap}
+.practice-public-note{font-size:12px;color:#73899b;margin:14px 2px 0}
+@media(max-width:1100px){.practice-days{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.gameboard{padding:15px}.gameboard-games{grid-template-columns:1fr}.practice-days{grid-template-columns:repeat(2,minmax(0,1fr))}.practice-control-line{display:block}.practice-control-line .btn{margin-top:10px}}
+@media(max-width:380px){.practice-days{grid-template-columns:1fr}}
+@media print{.practice-control,.practice-tools{display:none!important}.practice-days{grid-template-columns:repeat(5,minmax(0,1fr))}.practice-day{break-inside:avoid}#todayScoreboard{break-inside:avoid}}

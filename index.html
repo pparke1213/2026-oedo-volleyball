@@ -90,6 +90,40 @@ button.tree-card:hover:not(:disabled){border-color:#28897a;transform:translateY(
 @media(max-width:620px){.home-hero{padding:24px 20px;min-height:176px}.home-hero-icon{font-size:45px;align-self:flex-end}.home-quick-grid{grid-template-columns:1fr;gap:9px}.home-tile{min-height:88px;padding:13px}.home-tile-icon{width:47px;height:47px;font-size:24px}.home-tile-title{font-size:15px}.home-highlight{display:block;padding:16px}.home-highlight .btn{margin-top:12px;width:100%}.home-admin-grid{grid-template-columns:1fr}}
 @media print{#view-home{display:none!important}}
 
+/* 대회 안내 및 학생용 규정 페이지 */
+.guide-intro{padding:20px 23px;background:linear-gradient(120deg,#eaf3ff,#f9fcff);border:1px solid #cbdff6;border-radius:16px;margin:12px 0 18px}
+.guide-intro .guide-kicker{font-size:12px;font-weight:850;color:#356ca4;letter-spacing:.06em;margin-bottom:6px}
+.guide-intro h3{font-size:21px;letter-spacing:-.035em;margin:0 0 5px;color:#1a3c5c}
+.guide-intro p{font-size:13px;color:#617d96;margin:0}
+.guide-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;align-items:start}
+.guide-panel{padding:20px 21px}
+.guide-panel-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.guide-number{display:grid;place-items:center;width:37px;height:37px;flex:none;background:#e8f1ff;border-radius:11px;color:#2864a6;font-size:13px;font-weight:950}
+.guide-panel h3{font-size:18px;margin:0;color:#1d3c59;letter-spacing:-.03em}
+.guide-list{margin:0;padding-left:22px;font-size:13px;color:#334e65;line-height:1.8}
+.guide-list li{padding-left:3px;margin-bottom:4px}
+.guide-facts{width:100%;border-collapse:collapse;table-layout:fixed}
+.guide-facts th,.guide-facts td{text-align:left;font-size:13px;padding:9px 5px;border-bottom:1px solid #e9eff4;vertical-align:top}
+.guide-facts th{width:112px;font-weight:850;color:#3e6c9a}
+.guide-facts td{color:#294358}
+.guide-timeline{display:grid;gap:10px}
+.guide-step{display:flex;gap:12px;align-items:flex-start;background:#f6f9fc;padding:11px 13px;border-radius:10px}
+.guide-step span{font-weight:900;color:#2d72a9;font-size:12px;min-width:105px}
+.guide-step strong{font-size:13px;color:#334e62;font-weight:700}
+.guide-check{padding:0;margin:0;list-style:none;display:grid;gap:10px}
+.guide-check li{display:flex;gap:10px;color:#334e65;line-height:1.6;font-size:13px}
+.guide-check li::before{content:"☑";font-size:17px;color:#25866c;line-height:1.3}
+.guide-warning{margin-top:16px;padding:22px 23px;border:2px solid #d45150;border-radius:17px;background:#fff8f6;box-shadow:0 5px 20px #d4515012}
+.guide-warning-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:7px}
+.guide-warning h3{margin:0;font-size:20px;font-weight:950;letter-spacing:-.035em;color:#9b2b2b}
+.guide-warning-rule{font-weight:950;font-size:clamp(17px,2.2vw,23px);color:#b32828;line-height:1.5;margin:13px 0 17px;padding:14px 16px;border-radius:11px;background:#ffe8e6;text-align:center}
+.guide-warning p{margin:0;font-size:13px;color:#8c4545}
+.guide-warning ol{padding-left:23px;margin:0;display:grid;gap:10px;font-size:14px;font-weight:780;color:#722929}
+.guide-video-shortcut{margin-top:17px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#eef5ff;border-radius:13px;padding:17px 20px}
+.guide-video-shortcut p{margin:0;color:#355b80;font-size:13px}
+@media(max-width:820px){.guide-layout{grid-template-columns:1fr}.guide-panel{padding:18px}.guide-facts th{width:95px}.guide-warning{padding:18px}.guide-video-shortcut{flex-direction:column;align-items:stretch}.guide-video-shortcut .btn{width:100%}}
+@media(max-width:460px){.guide-step{display:block}.guide-step span{display:block;margin-bottom:4px}.guide-intro{padding:17px}.guide-warning ol{font-size:13px}}
+
 </style>
 <link rel="stylesheet" href="./draw-stage.css" />
 <link rel="stylesheet" href="./officials.css" />
@@ -101,7 +135,7 @@ button.tree-card:hover:not(:disabled){border-color:#28897a;transform:translateY(
  <div id="connectionBar" class="connection-bar" role="status"><span>🔒 <strong id="cloudStatus">오프라인 개인 관리 모드</strong> <span id="cloudHint">공유 설정 전에는 이 기기에만 저장됩니다.</span></span><span id="authArea"></span></div>
  <div id="accessWall" class="access-wall hidden"></div>
  <div id="appBody">
- <div class="top-controls"><nav class="tabs" aria-label="보기 전환"><button class="tab active" data-tab="home">🏠 홈</button><button class="tab" data-tab="overview">전체 현황</button><button class="tab" data-tab="schedule">경기 일정</button><button class="tab" data-tab="bracket">토너먼트 대진표</button><button class="tab" data-tab="practice">점심 연습일</button><button class="tab" data-tab="rules">🎥 경기 규칙 영상</button><button class="tab edit-only" data-tab="teams">참가팀·선수 명단</button><button class="tab edit-only" data-tab="share">학생 공개·QR</button></nav><div class="actions"><button id="exportCsv" class="btn edit-only">일정 CSV</button><button id="exportRoster" class="btn edit-only">선수명단 CSV</button><button id="exportJson" class="btn edit-only">데이터 백업</button><button id="importBtn" class="btn edit-only">백업 불러오기</button><button id="printBtn" class="btn">인쇄</button></div></div>
+ <div class="top-controls"><nav class="tabs" aria-label="보기 전환"><button class="tab active" data-tab="home">🏠 홈</button><button class="tab" data-tab="overview">전체 현황</button><button class="tab" data-tab="schedule">경기 일정</button><button class="tab" data-tab="bracket">토너먼트 대진표</button><button class="tab" data-tab="practice">점심 연습일</button><button class="tab" data-tab="guide">📋 대회 안내·규정</button><button class="tab" data-tab="rules">🎥 경기 규칙 영상</button><button class="tab edit-only" data-tab="teams">참가팀·선수 명단</button><button class="tab edit-only" data-tab="share">학생 공개·QR</button></nav><div class="actions"><button id="exportCsv" class="btn edit-only">일정 CSV</button><button id="exportRoster" class="btn edit-only">선수명단 CSV</button><button id="exportJson" class="btn edit-only">데이터 백업</button><button id="importBtn" class="btn edit-only">백업 불러오기</button><button id="printBtn" class="btn">인쇄</button></div></div>
  <input id="importFile" type="file" accept=".json,application/json" hidden />
 
  <section id="view-home" class="view">
@@ -114,6 +148,7 @@ button.tree-card:hover:not(:disabled){border-color:#28897a;transform:translateY(
    <button type="button" class="home-tile primary" data-tab="bracket"><span class="home-tile-icon" aria-hidden="true">🏆</span><span><span class="home-tile-title">토너먼트 대진표</span><span class="home-tile-caption" style="display:block">남학생부 · 여학생부 대진과 승리팀</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
    <button type="button" class="home-tile" data-tab="schedule"><span class="home-tile-icon" aria-hidden="true">📅</span><span><span class="home-tile-title">경기 일정 · 결과</span><span class="home-tile-caption" style="display:block">날짜별 경기, 코트, 세트 점수</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
    <button type="button" class="home-tile" data-tab="practice"><span class="home-tile-icon" aria-hidden="true">🏐</span><span><span class="home-tile-title">점심 연습일</span><span class="home-tile-caption" style="display:block">11월 9~13일 · 우리 반 연습 날짜</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
+   <button type="button" class="home-tile" data-tab="guide"><span class="home-tile-icon" aria-hidden="true">📋</span><span><span class="home-tile-title">대회 안내 · 규정</span><span class="home-tile-caption" style="display:block">경기 진행 방식과 꼭 지켜야 할 약속</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
    <button type="button" class="home-tile" data-tab="rules"><span class="home-tile-icon" aria-hidden="true">🎥</span><span><span class="home-tile-title">경기 규칙 영상</span><span class="home-tile-caption" style="display:block">짧은 영상으로 규칙 살펴보기</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
    <button type="button" class="home-tile" data-tab="overview"><span class="home-tile-icon" aria-hidden="true">📊</span><span><span class="home-tile-title">대회 전체 현황</span><span class="home-tile-caption" style="display:block">오늘의 경기 전광판과 진행 현황</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
    <button type="button" class="home-tile" data-tab="photo" id="homePhotoCard"><span class="home-tile-icon" aria-hidden="true">📸</span><span><span class="home-tile-title">포토 이벤트</span><span class="home-tile-caption" style="display:block">경기 사진 제출하고 추첨 참여!</span></span><span class="home-tile-arrow" aria-hidden="true">›</span></button>
@@ -143,6 +178,71 @@ button.tree-card:hover:not(:disabled){border-color:#28897a;transform:translateY(
    <div class="practice-tools"><button type="button" class="btn" id="practiceUndoBtn">↩ 최근 추첨 취소</button><button type="button" class="btn" id="practiceCsvBtn">📄 일정표 CSV 저장</button><button type="button" class="btn warn" id="practiceResetBtn">전체 추첨 초기화</button></div>
  </div>
  <div id="practiceDays" class="practice-days"></div>
+ </section>
+
+ <section id="view-guide" class="view hidden">
+   <div class="section-head"><div><h2>📋 대회 안내 · 규정</h2><p>2026 외도초등학교 6학년 바운스발리볼 학급 대항전</p></div></div>
+   <div class="guide-intro"><div class="guide-kicker">대진 추첨 및 대회 진행 안내</div><h3>함께 지키는 약속, 더 즐거운 우리 반 경기!</h3><p>경기 시작 전에 일정과 코트를 확인하고, 아래 대회 운영 규정을 꼭 읽어 주세요.</p></div>
+   <div class="guide-layout">
+     <article class="panel guide-panel">
+       <div class="guide-panel-head"><div class="guide-number">01</div><h3>대진 추첨 방식</h3></div>
+       <ol class="guide-list">
+         <li>남자부와 여자부를 구분하여 각각 추첨합니다.</li>
+         <li>각 팀 대표자가 직접 추첨하여 대진 위치를 결정합니다.</li>
+         <li>추첨 결과에 따라 토너먼트 대진표를 확정합니다.</li>
+         <li>확정된 대진표는 원칙적으로 변경할 수 없습니다.</li>
+         <li>부전승이 발생하면 해당 팀은 다음 라운드에 자동 진출합니다.</li>
+       </ol>
+     </article>
+     <article class="panel guide-panel">
+       <div class="guide-panel-head"><div class="guide-number">02</div><h3>대회 진행 방식</h3></div>
+       <table class="guide-facts" aria-label="대회 진행 방식">
+         <tbody>
+           <tr><th scope="row">경기 부문</th><td>남자부 / 여자부</td></tr>
+           <tr><th scope="row">경기 방식</th><td>단일 탈락 토너먼트</td></tr>
+           <tr><th scope="row">세트 구성</th><td>3세트제 (2세트 선승)</td></tr>
+           <tr><th scope="row">경기 요일</th><td>월·화·수·목·금</td></tr>
+           <tr><th scope="row">경기 시간</th><td><strong>오전 8:10 ~ 8:50</strong><br>(8:10 경기 시작)</td></tr>
+           <tr><th scope="row">경기 장소</th><td>학교 체육관</td></tr>
+           <tr><th scope="row">코트 운영</th><td>2개 코트에서 하루 총 2경기 진행</td></tr>
+           <tr><th scope="row">순위 결정</th><td>남녀 각 우승·준우승·공동 3위<br>(3·4위전 없음)</td></tr>
+         </tbody>
+       </table>
+     </article>
+     <article class="panel guide-panel">
+       <div class="guide-panel-head"><div class="guide-number">03</div><h3>경기 당일 진행 순서</h3></div>
+       <div class="guide-timeline">
+         <div class="guide-step"><span>경기 시작 전</span><strong>참가팀 집합 및 출전 선수 명단 확인</strong></div>
+         <div class="guide-step"><span>오전 8:10</span><strong>지정된 코트에서 경기 시작</strong></div>
+         <div class="guide-step"><span>경기 종료 후</span><strong>기록원 결과 확인 → 승리팀 확정 → 다음 라운드 진출</strong></div>
+       </div>
+     </article>
+     <article class="panel guide-panel">
+       <div class="guide-panel-head"><div class="guide-number">04</div><h3>대표자 유의사항</h3></div>
+       <ul class="guide-check">
+         <li>경기 일정과 배정 코트를 반드시 확인하기</li>
+         <li>경기 시작 전에 출전 선수 전원 집합하기</li>
+         <li>출전 선수 명단과 참가 조건 준수하기</li>
+         <li>심판 판정 및 학생 운영위원의 안내 따르기</li>
+         <li>경기 일정이나 변경 사항을 팀원에게 정확히 전달하기</li>
+       </ul>
+     </article>
+   </div>
+   <section class="guide-warning" aria-labelledby="guideWarningTitle">
+     <div class="guide-warning-top"><span aria-hidden="true">⚠️</span><h3 id="guideWarningTitle">05 반드시 지켜야 할 금지 행위 및 실격 규정</h3></div>
+     <p>아래 행위는 엄격히 금지합니다.</p>
+     <div class="guide-warning-rule">1회 적발 시 경고 · 2회 이상 적발 시 실격!</div>
+     <ol>
+       <li>경기 중 네트를 마주보고 상대방을 도발하는 행위</li>
+       <li>경기 후 상대방을 비난하거나 놀리는 행위</li>
+       <li>심판 판정에 불복하거나 항의하는 행위</li>
+       <li>비속어 사용 및 폭력적 행위</li>
+     </ol>
+   </section>
+   <div class="guide-video-shortcut">
+     <p><strong>🏐 경기 규칙을 영상으로도 확인하세요.</strong><br>짧은 쇼츠 영상으로 주요 경기 규칙을 살펴볼 수 있어요.</p>
+     <button type="button" class="btn primary" data-tab="rules">🎥 경기 규칙 영상 보기</button>
+   </div>
  </section>
  <section id="view-rules" class="view hidden">
   <div class="section-head"><div><h2>🎥 바운스발리볼 경기 규칙 영상</h2><p>대회에 참가하기 전에 영상으로 경기 규칙을 확인하세요!</p></div></div>
